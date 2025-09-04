@@ -1,45 +1,174 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form with Formspree</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Search (Formspree) — Example</title>
+
   <style>
+    /* Basic center layout */
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f6f8fa;
+      margin: 0;
+      padding: 2rem;
     }
-    form {
-      display: inline-block;
-      margin-top: 20px;
+
+    .search-card {
+      width: 100%;
+      max-width: 640px;
+      background: #fff;
+      padding: 1.25rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(20,20,30,0.06);
     }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      font-size: 16px;
+
+    /* Form container */
+    .search-form {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    /* Input styling */
+    .search-input {
+      flex: 1;
+      padding: 0.7rem 0.9rem 0.7rem 2.8rem; /* left padding to make space for icon */
+      border: 1px solid #d9dbe0;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      font-size: 1rem;
+      line-height: 1.2;
+      outline: none;
     }
-    button {
-      background-color: #4CAF50;
+    .search-input:focus {
+      border-color: #6b9cff;
+      box-shadow: 0 0 0 4px rgba(107,156,255,0.08);
+    }
+
+    /* Icon inside input (absolute position) */
+    .input-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .input-icon svg {
+      position: absolute;
+      left: 10px;
+      width: 18px;
+      height: 18px;
+      pointer-events: none; /* so clicking focuses input */
+      opacity: 0.7;
+    }
+
+    /* Submit button */
+    .search-btn {
+      background: #2563eb;
       color: white;
+      border: none;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    button:hover {
-      background-color: #45a049;
+    .search-btn svg { width: 18px; height: 18px; }
+
+    /* small message area */
+    .msg {
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 420px) {
+      .search-btn { padding: 0.55rem; }
     }
   </style>
 </head>
 <body>
 
-  <h2>Send me a message</h2>
+  <main class="search-card" role="main">
+    <h2 style="margin:0 0 0.6rem 0; font-size:1.15rem;">Search — submit to Formspree</h2>
 
-  <!-- Formspree form -->
-  <form action="https://formspree.io/f/movnpdoq" method="POST">
-    <input type="text" name="message" placeholder="Type anything..." required>
-    <button type="submit">Send</button>
-  </form>
+    <!--
+      IMPORTANT: replace YOUR_FORMSPREE_ID below with the ID Formspree gives you,
+      e.g. action="https://formspree.io/f/maykqwer"
+    -->
+    <form class="search-form"
+          action="https://formspree.io/f/xkgvpbwj"
+          method="POST"
+          id="searchForm"
+          novalidate
+          aria-label="Search form">
+
+      <!-- Hidden input so Formspree knows where to send/identify the field -->
+      <input type="hidden" name="_subject" value="Website search submission">
+
+      <label class="input-icon" for="query" style="position:relative; width:100%;">
+        <!-- Inline search SVG icon (left side inside input) -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor"
+                d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5
+                   6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5
+                   4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5
+                   9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+
+        <input
+          id="query"
+          class="search-input"
+          name="search_query"
+          type="search"
+          placeholder="Type your search or message here..."
+          autocomplete="off"
+          required
+          aria-required="true" />
+      </label>
+
+      <!-- Submit button (keeps icon for clarity) -->
+      <button type="submit" class="search-btn" aria-label="Submit search">
+        <!-- search icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor"
+                d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5
+                   6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5
+                   4.99L20.49 19l-4.99-5z"/>
+        </svg>
+        Search
+      </button>
+    </form>
+
+    <p class="msg" id="formMsg">When submitted, Formspree will send the data to your email (or webhook) configured in Formspree.</p>
+  </main>
+
+  <script>
+    // small client-side enhancement: show quick success message and prevent accidental empty submit
+    const form = document.getElementById('searchForm');
+    const msg = document.getElementById('formMsg');
+
+    form.addEventListener('submit', function (e) {
+      const q = form.querySelector('[name="search_query"]').value.trim();
+      if (!q) {
+        e.preventDefault();
+        msg.textContent = 'Please type something to search or send.';
+        msg.style.color = '#b91c1c';
+        return;
+      }
+
+      // optional: show a small in-page acknowledgement while Formspree handles the request
+      msg.textContent = 'Sending…';
+      msg.style.color = '#374151';
+      // allow normal submit to proceed (no e.preventDefault()) so Formspree gets data
+    });
+  </script>
 
 </body>
 </html>
